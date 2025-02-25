@@ -6,10 +6,17 @@ from pathlib import Path
 from mutagen.easyid3 import EasyID3
 from mutagen.flac import FLAC
 from mutagen import File
+import re
 
 # Define allowed file types
 AUDIO_EXTENSIONS = {'.mp3', '.flac', '.wav'}
 IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png'}
+
+# Function to sanitize filenames
+def sanitize_filename(filename, max_length=100):
+    filename = re.sub(r'[^a-zA-Z0-9_\-\. ]', '', filename)  # Remove invalid characters
+    filename = filename.replace(' ', '_')  # Replace spaces with underscores
+    return filename[:max_length]  # Truncate if too long
 
 # Function to extract metadata from audio files
 def get_audio_metadata(file_path):
@@ -30,7 +37,7 @@ def get_audio_metadata(file_path):
 # Function to recursively parse folder and collect files
 def parse_folder(input_folder):
     today = datetime.datetime.today().strftime('%Y-%m-%d')
-    output_folder = f"Processed_{Path(input_folder).stem}_{today}"
+    output_folder = f"Processed_{sanitize_filename(Path(input_folder).stem)}_{today}"
     tracks_folder = os.path.join(output_folder, "Tracks")
     covers_folder = os.path.join(output_folder, "Covers")
     os.makedirs(tracks_folder, exist_ok=True)
@@ -50,13 +57,13 @@ def parse_folder(input_folder):
                 title, artist, album = get_audio_metadata(file_path)
                 title = title if title else Path(file).stem
                 artist = artist if artist else Path(input_folder).stem
-                new_filename = f"{str(track_counter).zfill(2)}_{artist}_{title}{ext}"
+                new_filename = f"{str(track_counter).zfill(2)}_{sanitize_filename(artist)}_{sanitize_filename(title)}{ext}"
                 shutil.copy(file_path, os.path.join(tracks_folder, new_filename))
                 metadata.append([new_filename, artist, "", "", "Pending", ""])
                 track_counter += 1
             
             elif ext in IMAGE_EXTENSIONS:
-                shutil.copy(file_path, os.path.join(covers_folder, file))
+                shutil.copy(file_path, os.path.join(covers_folder, sanitize_filename(file)))
             else:
                 ignored_files.append(file)
         
