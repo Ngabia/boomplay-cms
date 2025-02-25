@@ -1,0 +1,1 @@
+This is the official documentation for the BOOMPLAY metadata upload service using FTP.
