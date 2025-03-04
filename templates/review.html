@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Metadata</title>
+</head>
+<body>
+    <h2>Review Metadata Before Upload</h2>
+    <table border="1">
+        <tr>
+            <th>Track Name</th>
+            <th>Artist Name</th>
+            <th>UPC</th>
+            <th>ISRC</th>
+            <th>Upload Status</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row["Track Name"] }}</td>
+            <td>{{ row["Artist Name"] }}</td>
+            <td>{{ row["UPC"] }}</td>
+            <td>{{ row["ISRC"] }}</td>
+            <td>{{ row["Upload Status"] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <form action="{{ url_for('process', folder=folder) }}" method="post">
+        <button type="submit">Simulate Upload</button>
+    </form>
+</body>
+</html>

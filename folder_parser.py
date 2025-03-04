@@ -34,6 +34,16 @@ def get_audio_metadata(file_path):
         print(f"Error reading metadata for {file_path}: {e}")
         return None, None, None
 
+# Function to simulate FTP upload
+def simulate_ftp_upload(metadata_file):
+    df = pd.read_csv(metadata_file)
+    for index, row in df.iterrows():
+        print(f"Simulating upload: {row['Track Name']} by {row['Artist Name']}")
+        df.at[index, "Upload Status"] = "Simulated"
+        df.at[index, "Upload Timestamp"] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    df.to_csv(metadata_file, index=False)
+    print("Simulated FTP upload complete.")
+
 # Function to recursively parse folder and collect files
 def parse_folder(input_folder):
     today = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -82,6 +92,9 @@ def parse_folder(input_folder):
     df.to_excel(excel_path, index=False)
     
     print(f"Processing complete! Organized files saved in: {output_folder}")
+    
+    # Simulate FTP upload
+    simulate_ftp_upload(csv_path)
     
 # Example usage
 if __name__ == "__main__":
